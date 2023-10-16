@@ -1,0 +1,23 @@
+From 790ecabe6753cfb399659aac138b44ff57346127 Mon Sep 17 00:00:00 2001
+From: Louis Abel <label@rockylinux.org>
+Date: Tue, 1 Nov 2022 15:22:13 -0700
+Subject: [PATCH] patch up cockpit
+
+---
+ data/subscription-manager-cockpit.desktop | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/data/subscription-manager-cockpit.desktop b/data/subscription-manager-cockpit.desktop
+index e2b5b4c..08adc4b 100644
+--- a/data/subscription-manager-cockpit.desktop
++++ b/data/subscription-manager-cockpit.desktop
+@@ -1,5 +1,5 @@
+ [Desktop Entry]
+-Name=Red Hat Subscription Manager
++Name=Subscription Manager
+ Icon=subscription-manager
+ Type=Application
+ TryExec=/usr/libexec/cockpit-desktop
+-- 
+2.37.3
+
