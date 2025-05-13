@@ -1,6 +1,6 @@
 Name:                 subscription-manager-cockpit
 Version:              6
-Release:              1%{?dist}.openela.0.1
+Release:              2%{?dist}.openela.0.1
 Summary:              Subscription Manager Cockpit UI
 %if 0%{?suse_version}
 Group:                System Environment/Base
@@ -10,10 +10,10 @@ URL:                  https://www.candlepinproject.org/
 
 Source0:              %{name}-%{version}.tar.xz
 Source1:              %{name}-node-%{version}.tar.xz
+Patch0001:            0001-fix-adapt-to-the-new-state-of-insights-client.servic.patch
 BuildArch:            noarch
 ExclusiveArch:        %{nodejs_arches} noarch
-
-Patch1:               0001-patch-up-cockpit.patch
+Patch2:               0001-patch-up-cockpit.patch
 %if 0%{?fedora}
 BuildRequires:        nodejs-devel
 %endif
@@ -54,7 +54,7 @@ This package contains the desktop icons for the graphical interfaces provided fo
 of Red Hat subscriptions: subscription-manager-gui, subscription-manager-cockpit-plugin.
 
 %prep
-%autosetup -p 1 -n %{name} -a 1
+%autosetup -p 1 -n %{name} -a 1 -p 1
 # ignore pre-built webpack in release tarball and rebuild it
 rm -rf dist
 
@@ -85,8 +85,11 @@ desktop-file-validate %{buildroot}/%{_datadir}/applications/*
 %{_datadir}/icons/hicolor/symbolic/apps/*.svg
 
 %changelog
-* Thu Jan 25 2024 Release Engineering <releng@openela.org> - 6.openela.0.1
+* Tue May 13 2025 Release Engineering <releng@openela.org> - 6.openela.0.1
 - Remove Red Hat specific references
+
+* Wed Jan 22 2025 Pino Toscano <ptoscano@redhat.com> 6-2
+- Fix the insights-client status detection (RHEL-56159)
 
 * Mon Feb 20 2023 Pino Toscano <ptoscano@redhat.com> 6-1
 - Translated using Weblate (Kannada) (jsefler@redhat.com)

@@ -1,0 +1,69 @@
+From 77151a2462a2ee9d1d3bc501a01badd31eec04a1 Mon Sep 17 00:00:00 2001
+From: Pino Toscano <ptoscano@redhat.com>
+Date: Tue, 27 Aug 2024 11:04:12 +0200
+Subject: [PATCH] fix: adapt to the new state of insights-client.service on
+ failure
+
+There were recent changes to the insights-client.service systemd service
+of insights-client:
+https://github.com/RedHatInsights/insights-client/pull/240
+This in practice means that insights-client.service now automatically
+restarts itself in case of failure. Because of that, that the status of
+the service on failure now is not "failed" but "activating", since it
+will enabled again the next time insights-client.timer is triggered;
+the effect in the cockpit plugin is that the detection for a failed
+upload now does not work.
+
+To adapt to the new situation, tweak the detection a bit: in addition to
+the old logic (left there to support both old and new versions of
+insights-client), a new logic is added to check that the systemd service
+is "starting" (the cockpit mapping to the "activating" status) and its
+last result is different than "success" (hence it failed somehow).
+
+Also adapt the test a bit: the service needs explicit restarting now,
+rather than a "simple" start.
+
+Card ID: CCT-702
+---
+ src/insights.jsx         | 4 ++--
+ test/check-subscriptions | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/src/insights.jsx b/src/insights.jsx
+index 6f7ebde..ccf733c 100644
+--- a/src/insights.jsx
++++ b/src/insights.jsx
+@@ -436,7 +436,7 @@ function show_status_dialog() {
+                             <Button variant='link' isInline onClick={left(jump_to_timer)}>{_("Details")}</Button>
+                         </Alert>
+                         }
+-                        { insights_service.state == "failed" && failed_text &&
++                        { (insights_service.state == "failed" || (insights_service.state == "starting" && insights_service.details.Result != "success")) && failed_text &&
+                         <Alert variant='warning' title={failed_text}>
+                             <Button variant='link' isInline onClick={left(jump_to_service)}>{_("Details")}</Button>
+                         </Alert>
+@@ -516,7 +516,7 @@ export class InsightsStatus extends React.Component {
+         let status;
+ 
+         if (insights_timer.enabled) {
+-            let warn = (insights_service.state == "failed" &&
++            let warn = ((insights_service.state == "failed" || (insights_service.state == "starting" && insights_service.details.Result != "success")) &&
+                         insights_service.unit.ActiveExitTimestamp &&
+                         insights_service.unit.ActiveExitTimestamp / 1e6 > last_upload_monitor.timestamp);
+ 
+diff --git a/test/check-subscriptions b/test/check-subscriptions
+index ee95c97..ab5b072 100755
+--- a/test/check-subscriptions
++++ b/test/check-subscriptions
+@@ -451,7 +451,7 @@ class TestSubscriptions(SubscriptionsCase):
+         # Unbreak it and retry.
+         m.execute(["mv", "/etc/insights-client/machine-id.lost", "/etc/insights-client/machine-id"])
+         m.execute(
+-            "systemctl start insights-client; while systemctl --quiet is-active insights-client; do sleep 1; done",
++            "systemctl restart insights-client; while systemctl --quiet is-active insights-client; do sleep 1; done",
+             timeout=360,
+         )
+ 
+-- 
+2.48.0
+
