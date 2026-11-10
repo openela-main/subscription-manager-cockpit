@@ -1,5 +1,5 @@
 Name: subscription-manager-cockpit
-Version: 13
+Version: 17
 Release: 1%{?dist}
 Summary: Subscription Manager Cockpit UI
 %if 0%{?suse_version}
@@ -10,8 +10,8 @@ License: LGPL-2.1-or-later
 %endif
 URL: https://www.candlepinproject.org/
 
-Source0: https://github.com/cockpit-project/subscription-manager-cockpit/releases/download/%{version}/%{name}-%{version}.tar.xz
-Source1: https://github.com/cockpit-project/subscription-manager-cockpit/releases/download/%{version}/%{name}-node-%{version}.tar.xz
+Source0: https://github.com/cockpit-project/%{name}/releases/download/%{version}/%{name}-%{version}.tar.xz
+Source1: https://github.com/cockpit-project/%{name}/releases/download/%{version}/%{name}-node-%{version}.tar.xz
 BuildArch: noarch
 ExclusiveArch: %{nodejs_arches} noarch
 BuildRequires: make
@@ -29,6 +29,20 @@ Requires: rhsm-icons
 %if %{defined rhel} && %{undefined centos}
 Suggests: insights-client
 %endif
+
+Provides: bundled(npm(@patternfly/react-core)) = 6.6.0
+Provides: bundled(npm(@patternfly/react-icons)) = 6.6.0
+Provides: bundled(npm(@patternfly/react-styles)) = 6.6.0
+Provides: bundled(npm(@patternfly/react-table)) = 6.6.0
+Provides: bundled(npm(@patternfly/react-tokens)) = 6.6.0
+Provides: bundled(npm(focus-trap)) = 7.6.6
+Provides: bundled(npm(lodash)) = 4.18.1
+Provides: bundled(npm(prop-types)) = 15.8.1
+Provides: bundled(npm(react)) = 18.3.1
+Provides: bundled(npm(react-dom)) = 18.3.1
+Provides: bundled(npm(scheduler)) = 0.23.2
+Provides: bundled(npm(tabbable)) = 6.5.0
+Provides: bundled(npm(tslib)) = 2.8.1
 
 %description
 Subscription Manager Cockpit UI
@@ -79,8 +93,30 @@ desktop-file-validate %{buildroot}/%{_datadir}/applications/*
 %{_datadir}/icons/hicolor/symbolic/apps/*.svg
 
 %changelog
+* Thu Jul 30 2026 Packit <hello@packit.dev> - 17-1
+- Translations and dependency updates
+
+* Fri Jul 17 2026 Fedora Release Engineering <releng@fedoraproject.org> - 14.1-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_45_Mass_Rebuild
+
+* Tue Apr 14 2026 Packit <hello@packit.dev> - 14.1-1
+- packaging fixes
+- Resolves: rhbz#2457953
+
+
+* Thu Mar 26 2026 Packit <hello@packit.dev> - 14-1
+- Convert license headers to SPDX format
+- Bug fixes and translation updates
+
+
+- Resolves: rhbz#2376500
+
 * Wed Jan 28 2026 Packit <hello@packit.dev> - 13-1
 - Bug fixes and translation updates
+
+
+* Sat Jan 17 2026 Fedora Release Engineering <releng@fedoraproject.org> - 11.1-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_44_Mass_Rebuild
 
 * Thu Nov 13 2025 Packit <hello@packit.dev> - 11.1-1
 - packaging automation fixes
